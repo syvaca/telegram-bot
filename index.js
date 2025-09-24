@@ -33,9 +33,17 @@ bot.on("callback_query", async (ctx) => {
       
       // Encode user data as URL parameter
       const encodedUserData = encodeURIComponent(JSON.stringify(userData));
-      const gameUrl = `https://rizzz-game.vercel.app/?user=${encodedUserData}`;
-      
+      let gameUrl = `https://rizzz-game.vercel.app/?user=${encodedUserData}`;
+      if (ctx.chat.id && ctx.callbackQuery.message.message_id) {
+        gameUrl += `&chat_id=${ctx.chat.id}&message_id=${ctx.callbackQuery.message.message_id}`;
+      } else if (ctx.callbackQuery.inline_message_id) {
+        gameUrl += `&inline_message_id=${ctx.callbackQuery.inline_message_id}`;
+      }
+
       console.log("Game URL with user data:", gameUrl); // Debug log
+      console.log("Chat ID:", ctx.chat.id); // Debug log
+      console.log("Message ID:", ctx.callbackQuery.message.message_id); // Debug log
+      console.log("Inline Message ID:", ctx.callbackQuery.inline_message_id); // Debug log
       
       await ctx.answerCbQuery("", {
         url: gameUrl
